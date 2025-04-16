@@ -1,3 +1,37 @@
+# Popular for GitHub
+
+This is a Cloudflare worker that uses this that, every night at 3am:
+
+- gets the repos dataset of the previous day
+- sorts on activity, gets top 500 and adds them to a queue via sendBatch
+- adds one more item to queue after all that: aggregate
+
+The queue handler (export default { queue}) with max concurrency of 1 and max batch size of 100:
+
+- retrieve repo details using GitHub API
+- retrieve README.md from raw.githubusercontent.com
+- get `token-tree` from ziptree.uithub.com (use env.ZIPTREE_SECRET)
+- stores all of it in a DORM SQL table `repositories`. The table contains details_json, readme, tree, popular_date (YYYY-MM-DD)
+
+The aggregate task in the queue (at the end) fetches all popular_date of todays date, and puts the result in a KV under `latest`.
+
+The worker itself, then, outputs the content of KV latest at `/index.json`, a markdownified version at `/index.md`, and a landingpage viewing them at `/index.html`. Based on the accept header, the right one is chosen if `index.ext` wasn't specified.
+
+Besides this, the worker exposes /trigger and /aggregate that, given the right admin secret, will perform these actions that are normally handled by the schedule and queue.
+
+Context:
+
+- https://activity.forgithub.com/openapi.json
+- https://ziptree.uithub.com/openapi.json
+- https://uithub.com/janwilmake/dorm
+
+# Getting started
+
+- You can clone this repo and easily host on Cloudflare yourself
+- You can then run `/trigger` to start indexing. Change the 500 into a lower number to be done faster (for testing purposes )
+- `/aggregate` allows intermediately aggregating into the KV
+- To explore the data in the DORM: https://studio.outerbase.com/local/new-base/starbase and fill https://popular.forgithub.com/admin
+
 # CHANGELOG / TODO
 
 IMPROVED DATA FOR POPULAR REPOS:
@@ -46,36 +80,3 @@ FOR STUDENTS:
 BONUS
 
 fix activity parse w/ low enough CPU with a simpler good enough MVP base algo
-
-# SPEC
-
-Context:
-
-- https://activity.forgithub.com/openapi.json
-- https://ziptree.uithub.com/openapi.json
-
-This is a Cloudflare worker that uses this that, every night at 3am:
-
-- gets the repos dataset of the previous day
-- sorts on activity, gets top 500 and adds them to a queue via sendBatch
-- adds one more item to queue after all that: aggregate
-
-The queue handler (export default { queue}) with max concurrency of 1 and max batch size of 100:
-
-- retrieve repo details using GitHub API
-- retrieve README.md from raw.githubusercontent.com
-- get `token-tree` from ziptree.uithub.com (use env.ZIPTREE_SECRET)
-- stores all of it in a DORM SQL table `repositories`. The table contains details_json, readme, tree, popular_date (YYYY-MM-DD)
-
-The aggregate task in the queue (at the end) fetches all popular_date of todays date, and puts the result in a KV under `latest`.
-
-The worker itself, then, outputs the content of KV latest at `/index.json`, a markdownified version at `/index.md`, and a landingpage viewing them at `/index.html`. Based on the accept header, the right one is chosen if `index.ext` wasn't specified.
-
-Besides this, the worker exposes /trigger and /aggregate that, given the right admin secret, will perform these actions that are normally handled by the schedule and queue.
-
-# Getting started
-
-- You can clone this repo and easily host on Cloudflare yourself
-- You can then run `/trigger` to start indexing. Change the 500 into a lower number to be done faster (for testing purposes )
-- `/aggregate` allows intermediately aggregating into the KV
-- To explore the data in the DORM: https://studio.outerbase.com/local/new-base/starbase and fill https://popular.forgithub.com/admin
