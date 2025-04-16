@@ -1,5 +1,9 @@
 # Popular for GitHub
 
+- Launch: https://x.com/janwilmake/status/1912472992430326243
+- CURL Demo: https://x.com/janwilmake/status/1912473840439161166
+- MCP Demo: https://x.com/janwilmake/status/1912474763047453132
+
 This is a Cloudflare worker that uses this that, every night at 3am:
 
 - gets the repos dataset of the previous day

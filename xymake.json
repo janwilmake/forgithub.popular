@@ -1,0 +1,6 @@
+{
+  "posts": {
+    "launch": { "url": "https://x.com/janwilmake/status/1912472992430326243" }
+  },
+  "$schema": "https://cli.xymake.com/xymake.schema.json"
+}
