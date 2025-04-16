@@ -4,6 +4,9 @@
 import { DBConfig, DORM, createClient } from "dormroom/DORM";
 export { DORM };
 import { env } from "cloudflare:workers";
+//@ts-ignore
+import index from "./index.html";
+
 const TOP_REPOS_COUNT = 500;
 
 const dbConfig: DBConfig = {
@@ -66,7 +69,8 @@ export default {
     const url = new URL(request.url);
     const acceptHeader = request.headers.get("Accept") || "";
     const wantsMarkdown =
-      !acceptHeader.includes("text/html") || url.pathname === "/index.md";
+      (!acceptHeader.includes("text/html") && url.pathname === "/") ||
+      url.pathname === "/index.md";
 
     const client = createClient(env.REPOS_DB, dbConfig);
 
@@ -148,7 +152,10 @@ export default {
       );
     }
     // Return the latest aggregated data
-    if (url.pathname === "/index.json") {
+    if (
+      url.pathname === "/index.json" ||
+      acceptHeader.includes("application/json")
+    ) {
       const latestData = await env.REPOS_KV.get("latest");
 
       if (latestData) {
@@ -168,7 +175,10 @@ export default {
       });
     }
 
-    return new Response("Not found", { status: 404 });
+    return new Response(index, {
+      status: 200,
+      headers: { "Content-Type": "text/html;charset=utf8" },
+    });
   },
 
   // Handle queue messages
