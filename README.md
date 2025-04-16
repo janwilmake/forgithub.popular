@@ -32,6 +32,8 @@ Context:
 - `/aggregate` allows intermediately aggregating into the KV
 - To explore the data in the DORM: https://studio.outerbase.com/local/new-base/starbase and fill https://popular.forgithub.com/admin
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/janwilmake/forgithub.popular)
+
 # CHANGELOG / TODO
 
 IMPROVED DATA FOR POPULAR REPOS:
