@@ -1,6 +1,10 @@
 {
   "posts": {
-    "launch": { "url": "https://x.com/janwilmake/status/1912472992430326243" }
+    "launch": { "url": "https://x.com/janwilmake/status/1912472992430326243" },
+    "curl-demo:": {
+      "url": "https://x.com/janwilmake/status/1912473840439161166"
+    },
+    "mcp-demo": { "url": "https://x.com/janwilmake/status/1912474763047453132" }
   },
   "$schema": "https://cli.xymake.com/xymake.schema.json"
 }
