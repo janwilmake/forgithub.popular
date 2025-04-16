@@ -64,6 +64,9 @@ export default {
     ctx: ExecutionContext,
   ): Promise<Response> {
     const url = new URL(request.url);
+    const acceptHeader = request.headers.get("Accept") || "";
+    const wantsMarkdown =
+      !acceptHeader.includes("text/html") || url.pathname === "/index.md";
 
     const client = createClient(env.REPOS_DB, dbConfig);
 
@@ -118,6 +121,32 @@ export default {
       );
     }
 
+    // Return markdown format if requested or Accept header doesn't include text/html
+    if (wantsMarkdown) {
+      const latestData = await env.REPOS_KV.get("latest");
+
+      if (latestData) {
+        const data = JSON.parse(latestData);
+        const markdownContent = generateMarkdownList(data);
+
+        return new Response(markdownContent, {
+          headers: {
+            "Content-Type": "text/markdown;charset=utf8",
+            "Cache-Control": "max-age=3600",
+          },
+        });
+      }
+
+      return new Response(
+        "# No data available\n\nSorry, no repository data is currently available.",
+        {
+          status: 404,
+          headers: {
+            "Content-Type": "text/markdown",
+          },
+        },
+      );
+    }
     // Return the latest aggregated data
     if (url.pathname === "/index.json") {
       const latestData = await env.REPOS_KV.get("latest");
@@ -216,6 +245,26 @@ export default {
   },
 };
 
+// Generate markdown list from repository data
+function generateMarkdownList(data: any): string {
+  let markdown = `# Top ${data.count} GitHub Repositories\n\n`;
+  markdown += `Date: ${data.date}\n\n`;
+
+  if (!data.repositories || data.repositories.length === 0) {
+    return markdown + "No repositories found for this period.";
+  }
+
+  data.repositories.forEach((repo: any, index: number) => {
+    const stars = repo.stargazers_count.toLocaleString();
+    const language = repo.language ? `[${repo.language}]` : "";
+
+    markdown += `- **${repo.name}** - ${
+      repo.description || "No description"
+    } ${language} (⭐ ${stars})\n`;
+  });
+
+  return markdown;
+}
 // Get previous day's date in YYYY-MM-DD format
 function getPreviousDay(): string {
   const date = new Date();
