@@ -12,6 +12,7 @@ IMPROVED DATA FOR POPULAR REPOS:
 - ✅ Ensure 500 get put in the DB but the result stays under 100mb (50kb max per row)
 - ✅ Should probably only include URL to tree/readme and perhaps other LLM generated stuff, and should queue to prerender/cache these.
 - 🟠 If it works... launch this! SUPER WORTHY. opensource on open data. Then, make plugins work for uithub interface.
+- Enrichment: add owner data too (including twitter handle)
 
 LLM STUFF
 
@@ -56,7 +57,7 @@ Context:
 This is a Cloudflare worker that uses this that, every night at 3am:
 
 - gets the repos dataset of the previous day
-- sorts on activity, gets top 2000 and adds them to a queue via sendBatch
+- sorts on activity, gets top 500 and adds them to a queue via sendBatch
 - adds one more item to queue after all that: aggregate
 
 The queue handler (export default { queue}) with max concurrency of 1 and max batch size of 100:
@@ -64,10 +65,17 @@ The queue handler (export default { queue}) with max concurrency of 1 and max ba
 - retrieve repo details using GitHub API
 - retrieve README.md from raw.githubusercontent.com
 - get `token-tree` from ziptree.uithub.com (use env.ZIPTREE_SECRET)
-- stores all of it in an SQLite DO
+- stores all of it in a DORM SQL table `repositories`. The table contains details_json, readme, tree, popular_date (YYYY-MM-DD)
 
-The DO simply has one `fetch` endpoint to upsert an item into the DB. The table contains details_json, readme, tree, popular_date (YYYY-MM-DD)
+The aggregate task in the queue (at the end) fetches all popular_date of todays date, and puts the result in a KV under `latest`.
 
-The aggregate task in the queue (at the end) fetches all popular_date of todays date, and puts the result in a R2 under `latest`.
+The worker itself, then, outputs the content of KV latest at `/index.json`, a markdownified version at `/index.md`, and a landingpage viewing them at `/index.html`. Based on the accept header, the right one is chosen if `index.ext` wasn't specified.
 
-The worker itself, then, outputs the content of KV latest at `/index.json`
+Besides this, the worker exposes /trigger and /aggregate that, given the right admin secret, will perform these actions that are normally handled by the schedule and queue.
+
+# Getting started
+
+- You can clone this repo and easily host on Cloudflare yourself
+- You can then run `/trigger` to start indexing. Change the 500 into a lower number to be done faster (for testing purposes )
+- `/aggregate` allows intermediately aggregating into the KV
+- To explore the data in the DORM: https://studio.outerbase.com/local/new-base/starbase and fill https://popular.forgithub.com/admin
