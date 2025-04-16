@@ -1,0 +1,15 @@
+{
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "module": "NodeNext",
+    "types": ["@cloudflare/workers-types"],
+    "moduleResolution": "NodeNext",
+    "lib": ["es2022", "DOM"],
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true
+  }
+}

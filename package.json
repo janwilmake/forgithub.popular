@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250313.0"
+  },
+  "dependencies": {
+    "dormroom": "^0.0.6"
+  }
+}

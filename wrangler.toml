@@ -1,0 +1,45 @@
+name = "forgithub_popular"
+main = "main.ts"
+compatibility_date = "2024-04-15"
+
+assets.directory = "./public"
+dev.port = 3000
+
+route.custom_domain = true
+route.pattern = "popular.forgithub.com"
+
+# KV Namespace binding
+[[kv_namespaces]]
+binding = "REPOS_KV"
+id = "a321419fa6f647ea8f5aeed25b4d435a"
+preview_id = "a321419fa6f647ea8f5aeed25b4d435a"
+
+# Configure the cron trigger for 3am UTC daily
+[triggers]
+crons = ["0 3 * * *"]
+
+[[r2_buckets]]
+bucket_name = "github-popular"
+binding = "github_popular"
+
+# Queue for processing repositories
+[[queues.producers]]
+queue = "popular-queue2"
+delivery_delay = 0
+binding = "POPULAR_REPOS"
+
+[[queues.consumers]]
+queue = "popular-queue2"
+max_batch_size = 100
+max_batch_timeout = 30
+max_concurrency = 1
+
+# Durable Object for DB operations
+[[durable_objects.bindings]]
+name = "REPOS_DB"
+class_name = "DORM"
+
+# Durable Object migrations
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DORM"]

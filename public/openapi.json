@@ -1,0 +1,134 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GitHub Popular Repositories API",
+    "description": "API that provides information about popular GitHub repositories",
+    "version": "1.0.0",
+    "contact": {
+      "url": "https://popular.forgithub.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://popular.forgithub.com",
+      "description": "Main API server"
+    }
+  ],
+  "paths": {
+    "/index.json": {
+      "get": {
+        "summary": "Get current popular repositories",
+        "description": "Returns the latest list of popular GitHub repositories",
+        "operationId": "getPopularRepositories",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved popular repositories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Repository"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "example": "public, max-age=3600"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No data available yet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "No data available yet"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Repository": {
+        "type": "object",
+        "description": "GitHub repository details",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "description": "Repository owner's username",
+            "example": "microsoft"
+          },
+          "name": {
+            "type": "string",
+            "description": "Repository name",
+            "example": "vscode"
+          },
+          "description": {
+            "type": "string",
+            "description": "Repository description",
+            "example": "Visual Studio Code"
+          },
+          "stars": {
+            "type": "integer",
+            "description": "Number of stars",
+            "example": 150000
+          },
+          "language": {
+            "type": "string",
+            "description": "Primary programming language",
+            "example": "TypeScript"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Repository URL",
+            "example": "https://github.com/microsoft/vscode"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "required": ["error"]
+      }
+    },
+    "securitySchemes": {
+      "secretKey": {
+        "type": "apiKey",
+        "name": "secret",
+        "in": "query",
+        "description": "Secret key for protected operations"
+      }
+    }
+  }
+}
