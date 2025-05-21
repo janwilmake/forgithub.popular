@@ -268,7 +268,7 @@ function generateMarkdownList(data: any): string {
     const stars = repo.stargazers_count.toLocaleString();
     const language = repo.language ? `[${repo.language}]` : "";
 
-    markdown += `- **${repo.name}** - ${
+    markdown += `- **${repo.full_name}** - ${
       repo.description || "No description"
     } ${language} (⭐ ${stars})\n`;
   });
