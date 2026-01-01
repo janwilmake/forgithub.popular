@@ -1,0 +1,290 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GitHub Trending Repositories Index",
+  "type": "object",
+  "required": ["date", "repositories"],
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "The date of the trending repositories snapshot"
+    },
+    "repositories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/repository"
+      }
+    }
+  },
+  "definitions": {
+    "repository": {
+      "type": "object",
+      "required": [
+        "id",
+        "node_id",
+        "full_name",
+        "name",
+        "owner",
+        "private",
+        "description",
+        "fork",
+        "url",
+        "created_at",
+        "updated_at",
+        "pushed_at",
+        "stargazers_count",
+        "watchers_count",
+        "forks_count",
+        "open_issues_count",
+        "default_branch",
+        "new_star_count"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tree": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "tree_size": {
+          "type": ["string", "null"]
+        },
+        "new_star_count": {
+          "type": "string"
+        },
+        "twitter_username": {
+          "type": ["string", "null"]
+        },
+        "id": {
+          "type": "integer"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "owner": {
+          "$ref": "#/definitions/owner"
+        },
+        "description": {
+          "type": ["string", "null"]
+        },
+        "fork": {
+          "type": "boolean"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "pushed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "homepage": {
+          "type": ["string", "null"]
+        },
+        "size": {
+          "type": "integer"
+        },
+        "stargazers_count": {
+          "type": "integer"
+        },
+        "watchers_count": {
+          "type": "integer"
+        },
+        "language": {
+          "type": ["string", "null"]
+        },
+        "has_issues": {
+          "type": "boolean"
+        },
+        "has_projects": {
+          "type": "boolean"
+        },
+        "has_downloads": {
+          "type": "boolean"
+        },
+        "has_wiki": {
+          "type": "boolean"
+        },
+        "has_pages": {
+          "type": "boolean"
+        },
+        "has_discussions": {
+          "type": "boolean"
+        },
+        "forks_count": {
+          "type": "integer"
+        },
+        "archived": {
+          "type": "boolean"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "open_issues_count": {
+          "type": "integer"
+        },
+        "license": {
+          "oneOf": [{ "$ref": "#/definitions/license" }, { "type": "null" }]
+        },
+        "allow_forking": {
+          "type": "boolean"
+        },
+        "is_template": {
+          "type": "boolean"
+        },
+        "web_commit_signoff_required": {
+          "type": "boolean"
+        },
+        "topics": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "visibility": {
+          "type": "string",
+          "enum": ["public", "private", "internal"]
+        },
+        "forks": {
+          "type": "integer"
+        },
+        "open_issues": {
+          "type": "integer"
+        },
+        "watchers": {
+          "type": "integer"
+        },
+        "default_branch": {
+          "type": "string"
+        },
+        "permissions": {
+          "$ref": "#/definitions/permissions"
+        },
+        "temp_clone_token": {
+          "type": "string"
+        },
+        "custom_properties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "organization": {
+          "$ref": "#/definitions/owner"
+        },
+        "network_count": {
+          "type": "integer"
+        },
+        "subscribers_count": {
+          "type": "integer"
+        },
+        "readme": {
+          "type": "null"
+        }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "required": [
+        "login",
+        "id",
+        "node_id",
+        "avatar_url",
+        "gravatar_id",
+        "url",
+        "type",
+        "site_admin"
+      ],
+      "properties": {
+        "login": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "node_id": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "gravatar_id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["User", "Organization"]
+        },
+        "user_view_type": {
+          "type": "string"
+        },
+        "site_admin": {
+          "type": "boolean"
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "required": ["key", "name", "spdx_id", "url", "node_id"],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "spdx_id": {
+          "type": ["string", "null"]
+        },
+        "url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "node_id": {
+          "type": "string"
+        }
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "required": ["admin", "maintain", "push", "triage", "pull"],
+      "properties": {
+        "admin": {
+          "type": "boolean"
+        },
+        "maintain": {
+          "type": "boolean"
+        },
+        "push": {
+          "type": "boolean"
+        },
+        "triage": {
+          "type": "boolean"
+        },
+        "pull": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
